@@ -51,3 +51,12 @@ usually these types of LED strips expect a 5V logic signals.
 - Documentation in code of classes, methods, functions
 - Clean main loop
 - If a module uses multiple source files it should have a dedicated directory under /src
+
+### Roles of team members
+
+The specific roles might change, or team memebers chould work, help and
+contribute to other parts of the project, as time goes on. 
+
+- Jan Pánik: Implementation of Audio module
+- Matěj Berger: Implementation of Display module
+- Daniel Kubica: Implementation of LED controller module and administration of the git repository
