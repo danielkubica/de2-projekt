@@ -5,7 +5,11 @@
 Create an audio spectrum analyzer utilizing a microphone module, SPI
 display module an a NeoPixel LED strip.
 
+## Use cases
 
+- Locating noise sources, a hum is a shown as a peak.
+- Early warning for machines: new peaks mean wear.
+- A live demonstration of the FFT: sound in, spectrum out.
 
 ## Audio Spectrum Analyzer
 
