@@ -1,10 +1,11 @@
 """FFT (radix-2, Cooley-Tukey) for MicroPython."""
+
 import math
 from array import array
 
 
 def reverse_bits(x, bits):
-    """Reverse the lowest `bits` bits of x (bits = 3: 001 -> 100)."""
+    # reverse the lowest `bits` bits of x (bits = 3: 001 -> 100)
     r = 0
     for _ in range(bits):
         r = (r << 1) | (x & 1)
@@ -13,10 +14,7 @@ def reverse_bits(x, bits):
 
 
 class FFT:
-    """Magnitude spectrum of n real samples.
-
-    :param n: number of samples, power of 2 (256, 512, 1024)
-    """
+    """Magnitude spectrum of n real samples (n = power of 2)."""
 
     def __init__(self, n=512):
         self.n = n
@@ -40,7 +38,7 @@ class FFT:
         self.im = array('f', [0] * n)               # imaginary part
 
     def compute(self, samples):
-        """Return n/2 magnitudes. Bin k is at k * fs / n Hz."""
+        # returns n/2 magnitudes, bin k is at k * fs / n Hz
         n = self.n
         re, im = self.re, self.im
 

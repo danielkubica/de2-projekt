@@ -4,8 +4,8 @@ Modes:
   "sweep" - tries rising sample rates; used to find the working fs.
   "stats" - prints DC bias, p-p, RMS, measured fs per burst; used to check
             the bias, noise level, loudness range and clipping.
-  "dump"  - prints raw samples; analyzed on the PC with fft_dump.py to get
-            the spectrum (test tones, interference).
+  "dump"  - prints raw samples, to copy out and look at the spectrum
+            (test tones, interference).
 
 Wiring:
     VCC -> 3V3(OUT)   (pin 36)
