@@ -4,6 +4,9 @@
     while True:
         spectrum.sample()
         display.draw(spectrum.get_bars())
+
+get_freqs() gives the start frequency of each bar [Hz],
+get_db() the level of each bar [dBFS].
 """
 
 import math
@@ -33,6 +36,7 @@ class Spectrum:
         f_low = fs / 2 / 128
         self.first = []
         self.last = []
+        self.freqs = []                     # start frequency of each bar [Hz]
         for i in range(n_bars):
             f1 = f_low * 128 ** (i / n_bars)            # bar start [Hz]
             f2 = f_low * 128 ** ((i + 1) / n_bars)      # bar end [Hz]
@@ -42,8 +46,10 @@ class Spectrum:
                 k2 = k1 + 1                 # bass bar narrower than one bin -> nearest bin
             self.first.append(k1)
             self.last.append(k2)
+            self.freqs.append(f1)
 
         self.bars = [0.0] * n_bars
+        self.db = [0.0] * n_bars
 
     def sample(self):
         # record one burst and compute the bars (blocks for capture + FFT)
@@ -59,6 +65,7 @@ class Spectrum:
 
             # to dBFS: 10 * log10(power) = 4.343 * ln(power), 1e-20 avoids log(0)
             db = 4.343 * math.log(power + 1e-20)
+            self.db[i] = db
 
             # db_floor -> 0, db_ceil -> 1, clipped to 0..1
             value = (db - self.db_floor) / (self.db_ceil - self.db_floor)
@@ -67,3 +74,11 @@ class Spectrum:
     def get_bars(self):
         # n_bars values 0..1, lowest frequency first
         return self.bars
+
+    def get_db(self):
+        # level of each bar [dBFS], 0 dBFS = full scale
+        return self.db
+
+    def get_freqs(self):
+        # start frequency of each bar [Hz] (62.5, 70.2, 78.7 ... 7127)
+        return self.freqs
