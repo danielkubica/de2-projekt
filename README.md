@@ -12,32 +12,34 @@ Create an audio spectrum analyzer utilizing a microphone module, SPI display mod
 
 ## Audio Spectrum Analyzer
 
-### Hardware/software diagram
-![Project diagram](/readme_assets/diagram.svg)
+### Hardware wiring
 
-### Proposed wiring
+![Hardware wiring diagram](/readme_assets/hardware_wiring.svg)
 
-|   RP Pico   |Micorphone Module|
-|:-----------:|:---------------:|
-|     3V3     |       VCC       |
-|GPIO26 (ADC0)|       OUT       |
-|     GND     |       GND       |
+|   RP Pico 2   | Micorphone Module |
+|:-------------:|:-----------------:|
+|      3V3      |        VCC        |
+| GPIO26 (ADC0) |        OUT        |
+|     AGND      |        GND        |
 
-|RP Pico|Nokia 5110 Module|
-|:-----:|:---------------:|
-| 3.3V  |       VCC       |
-|  G2   |       RST       |
-|  G3   |       CE        |
-|  G4   |       D/C       |
-|  G5   |       DIN       |
-|  G6   |       CLK       |
-|  G7   |       VCC       |
-|  GP8  |       BL        |
-|  GND  |       GND       |
+| RP Pico 2 | Nokia 5110 Module |
+|:---------:|:-----------------:|
+|   3.3V    |        VCC        |
+|    GP2    |        RST        |
+|    GP3    |        CS         |
+|    GP4    |        D/C        |
+|   GP11    |        DIN        |
+|   GP10    |        CLK        |
+|   3.3V    |        VCC        |
+|   GP15    |        BL         |
+|    GND    |        GND        |
 
-One GPIO pin will be used for the Din (Data pin) of the NeoPixel LED
-Strip.  First going through a level shifter 3.3V -> 5V logic, since
-usually these types of LED strips expect a 5V logic signals.
+| RP Pico 2 | NeoPixel LED Strip |
+|:----------|--------------------|
+| GP16      | DATA               |
+
+External 3.3V power supply will be used for powering the LED Strip. It
+will share GND with the RP Pico 2 for common ground.
 
 ### Proposed micropython libraries in use
 
