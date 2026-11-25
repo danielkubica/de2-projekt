@@ -71,6 +71,20 @@ contribute to other parts of the project, as time goes on.
 - Matěj Berger: Implementation of Display module
 - Daniel Kubica: Implementation of LED controller module and administration of the git repository
 
+### Directory structure
+
+```
+├── readme_assets 
+└── src
+    ├── hardware_modules_test_scripts
+    └── lib
+```
+	
+Source code will be stored inside `/src`. `/src/lib` is for external
+libraries, like the MicroPython Nokia 5110 PCD8544 84x48 LCD driver
+library (`/src/lib/pcd8544.py`). `/src/hardware_module_test_scripts`
+stores testing scripts for the various hardware modules.
+
 ### Checklist
 
 Week 1:
