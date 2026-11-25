@@ -12,37 +12,47 @@ Create an audio spectrum analyzer utilizing a microphone module, SPI display mod
 
 ## Audio Spectrum Analyzer
 
-### Hardware/software diagram
-![Project diagram](/readme_assets/diagram.svg)
+### Hardware wiring
 
-### Proposed wiring
+![Hardware wiring diagram](/readme_assets/hardware_wiring.svg)
 
-|   RP Pico   |Micorphone Module|
-|:-----------:|:---------------:|
-|     3V3     |       VCC       |
-|GPIO26 (ADC0)|       OUT       |
-|     GND     |       GND       |
+|   RP Pico W   | Micorphone Module |
+|:-------------:|:-----------------:|
+|      3V3      |        VCC        |
+| GPIO26 (ADC0) |        OUT        |
+|     AGND      |        GND        |
 
-|RP Pico|Nokia 5110 Module|
-|:-----:|:---------------:|
-| 3.3V  |       VCC       |
-|  G2   |       RST       |
-|  G3   |       CE        |
-|  G4   |       D/C       |
-|  G5   |       DIN       |
-|  G6   |       CLK       |
-|  G7   |       VCC       |
-|  GP8  |       BL        |
-|  GND  |       GND       |
+| RP Pico W | Nokia 5110 Module |
+|:---------:|:-----------------:|
+|   3.3V    |        VCC        |
+|    GP2    |        RST        |
+|    GP3    |        CS         |
+|    GP4    |        D/C        |
+|   GP11    |        DIN        |
+|   GP10    |        CLK        |
+|   3.3V    |        VCC        |
+|   GP15    |        BL         |
+|    GND    |        GND        |
 
-One GPIO pin will be used for the Din (Data pin) of the NeoPixel LED
-Strip.  First going through a level shifter 3.3V -> 5V logic, since
-usually these types of LED strips expect a 5V logic signals.
+| RP Pico W | NeoPixel LED Strip |
+|:----------|--------------------|
+| GP16      | DATA               |
+
+External 3.3V power supply will be used for powering the LED Strip. It
+will share GND with the RP Pico W for common ground.
+
+### Diagram of a proposed main loop of the program
+
+![Software main loop diagram](/readme_assets/software_diagram.svg)
+
+So far, we don't expect any "user input". This is so far a simple main
+loop where we sample data (which is a blocking process, since it needs
+to continuously sample the data for the given duration of the sampling
+time) and then process it by other modules. 
 
 ### Proposed micropython libraries in use
 
 - [MicroPython PCD8544](https://github.com/mcauser/micropython-pcd8544)
-- [micropython-fourier](https://github.com/peterhinch/micropython-fourier)
 - [Micropython built-in neopixel library](https://docs.micropython.org/en/latest/library/neopixel.html)
 
 ### Proposed code organization
@@ -60,3 +70,34 @@ contribute to other parts of the project, as time goes on.
 - Jan Pánik: Implementation of Audio module
 - Matěj Berger: Implementation of Display module
 - Daniel Kubica: Implementation of LED controller module and administration of the git repository
+
+### Directory structure
+
+```
+├── readme_assets 
+└── src
+    ├── hardware_modules_test_scripts
+    └── lib
+```
+	
+Source code will be stored inside `/src`. `/src/lib` is for external
+libraries, like the MicroPython Nokia 5110 PCD8544 84x48 LCD driver
+library (`/src/lib/pcd8544.py`). `/src/hardware_module_test_scripts`
+stores testing scripts for the various hardware modules.
+
+### Checklist
+
+Week 1:
+- [x] Initial repo structure
+- [x] Defined team memebr roles
+- [x] Wiring proposal and library use
+
+Week 2:
+- [x] Testing of hardware modules
+- [x] Updated wiring/software diagrams
+- [ ] Initial class structure/APIs
+
+Week 3:
+
+
+
