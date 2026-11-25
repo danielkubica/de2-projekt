@@ -1,74 +1,43 @@
-"""FFT (radix-2, Cooley-Tukey) for MicroPython."""
-import math
-from array import array
+"""FFT speed test on the Pico W.
 
+Prints capture time, FFT time and the strongest frequency about twice
+per second. Used to choose N (change it below and run again).
+Play a test tone to check that the peak lands on the right frequency.
 
-def reverse_bits(x, bits):
-    """Reverse the lowest `bits` bits of x (bits = 3: 001 -> 100)."""
-    r = 0
-    for _ in range(bits):
-        r = (r << 1) | (x & 1)
-        x >>= 1
-    return r
+Needs microphone.py and fft.py on the board.
+"""
+import time
+from machine import Pin
+from microphone import Microphone
+from fft import FFT
 
+FS = 16000
+N = 512         # 256, 512 or 1024
 
-class FFT:
-    """Magnitude spectrum of n real samples.
+# Pico W: regulator to PWM mode (removes the ~8.7 kHz interference)
+Pin("WL_GPIO1", Pin.OUT).value(1)
 
-    :param n: number of samples, power of 2 (256, 512, 1024)
-    """
+mic = Microphone(fs=FS, n=N)
+fft = FFT(N)
 
-    def __init__(self, n=512):
-        self.n = n
+print("N = %d, bin width = %.1f Hz" % (N, FS / N))
 
-        bits = 0                                    # log2(n) = number of stages
-        while (1 << bits) < n:
-            bits += 1
+while True:
+    t0 = time.ticks_us()
+    mic.capture()
+    t1 = time.ticks_us()
+    mags = fft.compute(mic.buf)
+    t2 = time.ticks_us()
 
-        # input goes in bit-reversed order, so the output comes out in order
-        self.rev = array('H', [reverse_bits(i, bits) for i in range(n)])
+    capture_ms = time.ticks_diff(t1, t0) / 1000
+    fft_ms = time.ticks_diff(t2, t1) / 1000
 
-        # twiddle factors W^k = cos - j*sin
-        self.cos = array('f', [math.cos(2 * math.pi * k / n) for k in range(n // 2)])
-        self.sin = array('f', [math.sin(2 * math.pi * k / n) for k in range(n // 2)])
+    k_max = 1                                       # strongest bin, skip DC
+    for k in range(2, N // 2):
+        if mags[k] > mags[k_max]:
+            k_max = k
+    peak_hz = k_max * mic.fs_measured / N
 
-        # Hann window, stops a tone from smearing into neighbouring bins
-        self.window = array('f', [0.5 - 0.5 * math.cos(2 * math.pi * i / (n - 1))
-                                  for i in range(n)])
-
-        self.re = array('f', [0] * n)               # real part
-        self.im = array('f', [0] * n)               # imaginary part
-
-    def compute(self, samples):
-        """Return n/2 magnitudes. Bin k is at k * fs / n Hz."""
-        n = self.n
-        re, im = self.re, self.im
-
-        # remove DC (1.65 V bias), apply window, load bit-reversed
-        mean = sum(samples) / n
-        for i in range(n):
-            j = self.rev[i]
-            re[j] = (samples[i] - mean) * self.window[i]
-            im[j] = 0.0
-
-        # butterfly stages: 2-point DFTs -> 4-point -> ... -> n-point
-        size = 2
-        while size <= n:
-            half = size // 2
-            step = n // size
-            for start in range(0, n, size):
-                for k in range(half):
-                    a = start + k
-                    b = a + half
-                    c = self.cos[k * step]
-                    s = self.sin[k * step]
-                    tr = c * re[b] + s * im[b]      # t = W * x[b]
-                    ti = c * im[b] - s * re[b]
-                    re[b] = re[a] - tr              # x[b] = x[a] - t
-                    im[b] = im[a] - ti
-                    re[a] = re[a] + tr              # x[a] = x[a] + t
-                    im[a] = im[a] + ti
-            size *= 2
-
-        # magnitudes, first half only (second half is a mirror for real input)
-        return [math.sqrt(re[k] * re[k] + im[k] * im[k]) for k in range(n // 2)]
+    print("capture %.1f ms | fft %.1f ms | total %.1f ms | peak %d Hz" % (
+        capture_ms, fft_ms, capture_ms + fft_ms, peak_hz))
+    time.sleep_ms(500)
