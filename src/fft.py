@@ -1,6 +1,7 @@
 """FFT (radix-2, Cooley-Tukey) for MicroPython."""
 
 import math
+import micropython
 from array import array
 
 
@@ -37,16 +38,19 @@ class FFT:
         self.re = array('f', [0] * n)               # real part
         self.im = array('f', [0] * n)               # imaginary part
 
+    @micropython.native     # compiled to machine code instead of bytecode (faster)
     def compute(self, samples):
         # returns n/2 magnitudes, bin k is at k * fs / n Hz
         n = self.n
         re, im = self.re, self.im
+        cos, sin = self.cos, self.sin               # local copies = faster lookups
+        rev, window = self.rev, self.window
 
         # remove DC (1.65 V bias), apply window, load bit-reversed
         mean = sum(samples) / n
         for i in range(n):
-            j = self.rev[i]
-            re[j] = (samples[i] - mean) * self.window[i]
+            j = rev[i]
+            re[j] = (samples[i] - mean) * window[i]
             im[j] = 0.0
 
         # butterfly stages: 2-point DFTs -> 4-point -> ... -> n-point
@@ -58,8 +62,8 @@ class FFT:
                 for k in range(half):
                     a = start + k
                     b = a + half
-                    c = self.cos[k * step]
-                    s = self.sin[k * step]
+                    c = cos[k * step]
+                    s = sin[k * step]
                     tr = c * re[b] + s * im[b]      # t = W * x[b]
                     ti = c * im[b] - s * re[b]
                     re[b] = re[a] - tr              # x[b] = x[a] - t
