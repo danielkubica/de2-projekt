@@ -16,13 +16,13 @@ Create an audio spectrum analyzer utilizing a microphone module, SPI display mod
 
 ![Hardware wiring diagram](/readme_assets/hardware_wiring.svg)
 
-|   RP Pico 2   | Micorphone Module |
+|   RP Pico W   | Micorphone Module |
 |:-------------:|:-----------------:|
 |      3V3      |        VCC        |
 | GPIO26 (ADC0) |        OUT        |
 |     AGND      |        GND        |
 
-| RP Pico 2 | Nokia 5110 Module |
+| RP Pico W | Nokia 5110 Module |
 |:---------:|:-----------------:|
 |   3.3V    |        VCC        |
 |    GP2    |        RST        |
@@ -34,17 +34,25 @@ Create an audio spectrum analyzer utilizing a microphone module, SPI display mod
 |   GP15    |        BL         |
 |    GND    |        GND        |
 
-| RP Pico 2 | NeoPixel LED Strip |
+| RP Pico W | NeoPixel LED Strip |
 |:----------|--------------------|
 | GP16      | DATA               |
 
 External 3.3V power supply will be used for powering the LED Strip. It
-will share GND with the RP Pico 2 for common ground.
+will share GND with the RP Pico W for common ground.
+
+### Diagram of a proposed main loop of the program
+
+![Software main loop diagram](/readme_assets/software_diagram.svg)
+
+So far, we don't expect any "user input". This is so far a simple main
+loop where we sample data (which is a blocking process, since it needs
+to continuously sample the data for the given duration of the sampling
+time) and then process it by other modules. 
 
 ### Proposed micropython libraries in use
 
 - [MicroPython PCD8544](https://github.com/mcauser/micropython-pcd8544)
-- [micropython-fourier](https://github.com/peterhinch/micropython-fourier)
 - [Micropython built-in neopixel library](https://docs.micropython.org/en/latest/library/neopixel.html)
 
 ### Proposed code organization
@@ -62,5 +70,20 @@ contribute to other parts of the project, as time goes on.
 - Jan Pánik: Implementation of Audio module
 - Matěj Berger: Implementation of Display module
 - Daniel Kubica: Implementation of LED controller module and administration of the git repository
+
+### Checklist
+
+Week 1:
+- [x] Initial repo structure
+- [x] Defined team memebr roles
+- [x] Wiring proposal and library use
+
+Week 2:
+- [x] Testing of hardware modules
+- [x] Updated wiring/software diagrams
+- [ ] Initial class structure/APIs
+
+Week 3:
+
 
 

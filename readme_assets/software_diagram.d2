@@ -1,0 +1,17 @@
+# Software diagram.
+
+shape: sequence_diagram
+
+audio: Audio Controller
+display: Display Controller
+led: LED Strip Controller
+
+audio."Samples audio (length of 1 second) and processes it via FFT.\nPresents clean data for other controllers."
+audio <-> display: Calls a getter method(s) for the processed data, which it then uses.
+display."Visualizes the data on the Nokia SPI display."
+audio <-> led: Calls a getter method(s) for the processed data, which it then uses.
+led."Visualizes the data on the NeoPixel LED strip."
+
+
+
+
