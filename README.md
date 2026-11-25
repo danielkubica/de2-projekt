@@ -5,6 +5,8 @@
 Create an audio spectrum analyzer utilizing a microphone module, SPI
 display module an a NeoPixel LED strip.
 
+
+
 ## Audio Spectrum Analyzer
 
 ### Hardware wiring
